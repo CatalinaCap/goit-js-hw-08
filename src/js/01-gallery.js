@@ -4,35 +4,20 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 import { galleryItems } from './gallery-items';
 // Change code below this line
 
-const gallery = document.querySelector('.gallery');
-galleryItems.forEach(e => {
-  const { preview, original, description } = e;
-  const img = `<li class='gallery__item'>
-          <a class='gallery__link' href='${original}'>
-              <img src='${preview}' alt='${description}' class='gallery__image' data-source='${original}' title='${description}'>
-          </a>
-      </li>`;
-  gallery.insertAdjacentHTML('beforeend', img);
-});
-
-gallery.addEventListener('click', e => {
-  e.preventDefault();
-  if (e.target.nodeName !== 'IMG') {
-    return;
-  }
-  let gallery = new SimpleLightbox('.gallery a');
-  gallery.on('closed.simplelightbox', () => {
-    gallery.refresh();
-  });
-});
-
-observer.observe(document.body, {
-  childList: true,
-  subtree: true,
-});
-lightbox.on("show.simplelightbox", function () {
-  setTimeout(applyImageStyles, 100);
-});
-lightbox.on("change.simplelightbox", function () {
-  applyImageStyles();
+const galleryContainer = document.querySelector('.gallery');
+const galleryMarkup = galleryItems
+  .map(({ preview, original, description }) => {
+    return `
+      <li>
+        <a class="gallery__item" href="${original}">
+          <img class="gallery__image" src="${preview}" alt="${description}" />
+        </a>
+      </li>
+    `;
+  })
+  .join('');
+galleryContainer.innerHTML = galleryMarkup;
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
 });
